@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import java.util.List;
  * Created by galata on 20.07.16.
  */
 public class ExampleActivity extends AppCompatActivity implements BatListener, OnItemClickListener, OnOutsideClickedListener {
+    final private String TAG="ExampleActivity";
 
     private BatRecyclerView mRecyclerView;
     private BatAdapter mAdapter;
@@ -104,6 +106,7 @@ public class ExampleActivity extends AppCompatActivity implements BatListener, O
     @Override
     public void onClick(BatModel item, int position) {
         Toast.makeText(this, item.getText(), Toast.LENGTH_SHORT).show();
+        Log.e(TAG,item.getText() +" isChecked=" +  item.isChecked() + ",isPinned="+item.isPinned());
     }
 
     @Override

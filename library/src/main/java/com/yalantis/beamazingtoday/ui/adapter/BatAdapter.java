@@ -8,9 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -29,7 +31,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+
+
 
 /**
  * Created by galata on 15.07.16.
@@ -100,7 +105,7 @@ public class BatAdapter extends RecyclerView.Adapter<BatAdapter.ViewHolder> impl
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item2, parent, false));
     }
 
     @Override
@@ -108,7 +113,10 @@ public class BatAdapter extends RecyclerView.Adapter<BatAdapter.ViewHolder> impl
         BatModel model = mItems.get(position);
         holder.textView.setText(model.getText());
         setChecked(holder.radioButton, model.isChecked());
+        setChecked(holder.pinButton, model.isPinned());
+
         holder.radioButton.setTag(model);
+        holder.pinButton.setTag(model);
         holder.radioButton.setBackgroundResource(mRadioButtonRes);
         holder.divider.setBackgroundResource(mDividerColor);
         holder.textView.setTextColor(getColor(holder.rootView.getContext(), mTextColor));
@@ -127,20 +135,41 @@ public class BatAdapter extends RecyclerView.Adapter<BatAdapter.ViewHolder> impl
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
         if (!mIsBusy && mListener != null) {
             BatModel model = (BatModel) buttonView.getTag();
-            mListener.move(mItems.indexOf(model), isChecked ? mItems.size() - 1 : 0);
-            model.setChecked(isChecked);
+            if(buttonView.getId() == R.id.radio_button){
+                mListener.move(mItems.indexOf(model), isChecked ? mItems.size() - 1 : 0);
+                model.setChecked(isChecked);
+            }else if(buttonView.getId() == R.id.pin_button ) {
+                mListener.move(mItems.indexOf(model), isChecked ? 0 : getUnCheckedPosBackward(mItems));
+                model.setPinned(isChecked);
+            }
+
         } else {
             setChecked(buttonView, !isChecked);
+            Log.e("TAG","setChecked " + isChecked + "   " + (buttonView.getId() == R.id.radio_button));
+
         }
     }
+
+    private int getUnCheckedPosBackward(List<BatModel> mItem){
+        for(int i=mItem.size()-1;i>=0;i--){
+            if(!mItem.get(i).isChecked()){
+                return i;
+            }
+        }
+        return 0;
+    }
+
 
     private void setChecked(CompoundButton button, boolean checked) {
         button.setOnCheckedChangeListener(null);
         button.setChecked(checked);
         button.setOnCheckedChangeListener(this);
     }
+
+
 
     public void notify(@AnimationType int animationType, int position) {
         notify(animationType, position, -1);
@@ -186,15 +215,22 @@ public class BatAdapter extends RecyclerView.Adapter<BatAdapter.ViewHolder> impl
         @BindView(R2.id.divider)
         View divider;
 
+
+        @BindView(R2.id.pin_button)
+        CheckBox pinButton;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
+        //@OnCheckedChanged
+
         @OnClick(R2.id.clickable_view)
         void onCheck() {
             if (!mIsBusy) {
                 radioButton.toggle();
+                pinButton.toggle();
             }
         }
 

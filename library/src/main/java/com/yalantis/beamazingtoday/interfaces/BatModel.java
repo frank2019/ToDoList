@@ -11,4 +11,7 @@ public interface BatModel {
 
     void setChecked(boolean checked);
 
+    boolean isPinned();
+    void setPinned(boolean pinned);
+
 }

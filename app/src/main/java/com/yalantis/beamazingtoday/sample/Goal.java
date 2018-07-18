@@ -11,6 +11,12 @@ public class Goal implements BatModel {
 
     private boolean isChecked;
 
+    public void setPinned(boolean pinned) {
+        isPinned = pinned;
+    }
+
+    private boolean isPinned;
+
     public Goal(String name) {
         this.name = name;
     }
@@ -28,6 +34,11 @@ public class Goal implements BatModel {
     }
 
     @Override
+    public boolean isPinned() {
+        return isPinned;
+    }
+
+    @Override
     public boolean isChecked() {
         return isChecked;
     }
@@ -36,5 +47,7 @@ public class Goal implements BatModel {
     public String getText() {
         return getName();
     }
+
+
 
 }
